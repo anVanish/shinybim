@@ -1,6 +1,7 @@
 const express = require("express");
 const morgan = require("morgan");
 const dotenv = require("dotenv");
+const { route } = require("./routes");
 dotenv.config();
 
 const app = express();
@@ -12,9 +13,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 //routes
-app.get("/", function (req, res) {
-    res.send("Hello world from user service");
-});
+route(app);
 
 app.listen(PORT, () =>
     console.log(`Service started at port ${PORT}, http://localhost:${PORT}`)
