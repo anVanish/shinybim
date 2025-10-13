@@ -1,3 +1,3 @@
-const homeRouter = require("./homeRouter");
+const welcomeRouter = require("./welcomeRouter");
 
-module.exports = { homeRouter };
+module.exports = { welcomeRouter };

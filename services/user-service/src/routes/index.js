@@ -1,5 +1,5 @@
-const { homeRouter } = require("./router");
+const { welcomeRouter } = require("./router");
 
 exports.route = (app) => {
-    app.use("/", homeRouter);
+    app.use("/", welcomeRouter);
 };
