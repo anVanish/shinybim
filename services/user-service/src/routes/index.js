@@ -1,5 +1,6 @@
-const { welcomeRouter } = require("./router");
+const { welcomeRouter, authRouter } = require("./router");
 
 exports.route = (app) => {
-    app.use("/", welcomeRouter);
+    app.use("/api/auth", authRouter);
+    app.use("/api", welcomeRouter);
 };

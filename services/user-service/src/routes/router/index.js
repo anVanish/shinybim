@@ -1,3 +1,4 @@
 const welcomeRouter = require("./welcomeRouter");
+const authRouter = require("./authRouter");
 
-module.exports = { welcomeRouter };
+module.exports = { welcomeRouter, authRouter };
