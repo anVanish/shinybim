@@ -1,8 +1,9 @@
-const { errorMessage } = require("../app/utils/apiResponse");
+const apiResponse = require("../app/utils/apiResponse");
 
 function notfoundHandler(req, res, next) {
     res.status(404).json(
-        errorMessage({
+        apiResponse({
+            success: false,
             message: "The requested resource was not found on this server",
         })
     );

@@ -1,9 +1,14 @@
-const { errorMessage } = require("../app/utils/apiResponse");
+const apiResponse = require("../app/utils/apiResponse");
 
 function errorHandler(err, req, res, next) {
     let statusCode = err.statusCode || 500;
     console.error(err);
-    res.status(statusCode).json(errorMessage({ message: err.message }));
+    res.status(statusCode).json(
+        apiResponse({
+            success: false,
+            message: err.message,
+        })
+    );
 }
 
 module.exports = errorHandler;

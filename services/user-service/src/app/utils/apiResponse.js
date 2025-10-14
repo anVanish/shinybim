@@ -1,15 +1,9 @@
-exports.successMessage = ({ message = "", data = {} }) => {
+function apiResponse({ success = true, message = "", data = {} }) {
     return {
-        success: true,
+        success,
         message,
         data,
     };
-};
+}
 
-exports.errorMessage = ({ message = "", data = {} }) => {
-    return {
-        success: false,
-        message,
-        data,
-    };
-};
+module.exports = apiResponse;
