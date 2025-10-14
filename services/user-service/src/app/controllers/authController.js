@@ -4,6 +4,7 @@ const apiResponse = require("../utils/apiResponse");
 const httpError = require("../utils/httpError");
 const generateTokens = require("../utils/generateTokens");
 const Tokens = require("../models/Tokens");
+const jwt = require("jsonwebtoken");
 
 //POST /auth/login
 exports.login = async (req, res, next) => {
@@ -26,6 +27,43 @@ exports.login = async (req, res, next) => {
                 data: {
                     accessToken,
                     refreshToken,
+                },
+            })
+        );
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.refreshToken = async (req, res, next) => {
+    try {
+        const { refreshToken } = req.body;
+        if (!refreshToken) throw httpError("Missing refresh token", 401);
+
+        //check in database
+        const stored = await Tokens.findOne({ token: refreshToken });
+        if (!stored) throw httpError("Invalid refresh token", 403);
+
+        //get user from token
+        const decodedUser = jwt.verify(
+            refreshToken,
+            process.env.JWT_REFRESH_SECRET
+        );
+        const user = await Users.findById(decodedUser._id);
+        if (!user) throw httpError("User not found", 404);
+
+        const { accessToken, refreshToken: newRefreshToken } = generateTokens(
+            user.toObject()
+        );
+        stored.token = newRefreshToken;
+        await stored.save();
+
+        res.json(
+            apiResponse({
+                message: "Token refreshed",
+                data: {
+                    accessToken,
+                    refreshToken: newRefreshToken,
                 },
             })
         );
