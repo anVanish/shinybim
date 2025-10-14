@@ -12,7 +12,7 @@ exports.login = async (req, res, next) => {
         if (!email || !password) throw httpError("Invalid credentials", 400);
 
         //check user
-        const user = await Users.findOne({ email });
+        const user = await Users.findOne({ email }).select("+password");
         if (!user) throw httpError("Email not found", 401);
         if (!bcrypt.compareSync(password, user.password))
             throw httpError("Password incorrect", 401);
