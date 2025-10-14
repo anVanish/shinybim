@@ -3,6 +3,6 @@ const { authMiddleware } = require("../middlewares/authMiddleware");
 
 exports.route = (app) => {
     app.use("/api/auth", authRouter);
-    app.use("/api/me", authMiddleware, userRouter);
+    app.use("/api/users", authMiddleware, userRouter);
     app.use("/api", welcomeRouter);
 };

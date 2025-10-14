@@ -6,6 +6,6 @@ exports.safeUser = (user) => {
 
 exports.safeUpdateUser = (user) => {
     if (!user) return {};
-    const { name, email, avatarUrl } = user;
-    return { name, email, avatarUrl };
+    const { name, avatarUrl } = user;
+    return { name, avatarUrl };
 };
