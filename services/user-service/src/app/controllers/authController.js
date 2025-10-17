@@ -15,8 +15,9 @@ exports.login = async (req, res, next) => {
         //check user
         const user = await Users.findOne({ email }).select("+password");
         if (!user) throw httpError("Email not found", 401);
-        if (!bcrypt.compareSync(password, user.password))
-            throw httpError("Password incorrect", 401);
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) throw httpError("Password incorrect", 401);
 
         //generate token
         const { accessToken, refreshToken } = generateTokens(user.toObject());
