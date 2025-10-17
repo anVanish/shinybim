@@ -35,6 +35,7 @@ exports.login = async (req, res, next) => {
     }
 };
 
+//POST /auth/refresh
 exports.refreshToken = async (req, res, next) => {
     try {
         const { refreshToken } = req.body;
@@ -67,6 +68,20 @@ exports.refreshToken = async (req, res, next) => {
                 },
             })
         );
+    } catch (error) {
+        next(error);
+    }
+};
+
+//POST /auth/logout
+//delete refresh token from database
+exports.logout = async (req, res, next) => {
+    try {
+        const { refreshToken } = req.body;
+        const token = await Tokens.findOneAndDelete({ token: refreshToken });
+        if (!token) throw httpError("Invalid token", 401);
+
+        res.json(apiResponse({ message: "Successfully logout" }));
     } catch (error) {
         next(error);
     }
