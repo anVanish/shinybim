@@ -7,7 +7,6 @@ const Categories = new mongoose.Schema(
         description: { type: String },
         parentId: { type: mongoose.Schema.Types.ObjectId, ref: "categories" },
         slug: { type: String, unique: true, lowercase: true },
-        isLeaf: { type: Boolean, default: true },
     },
     { timestamps: true }
 );

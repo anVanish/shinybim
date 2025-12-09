@@ -4,6 +4,8 @@ const Categories = require("../models/Categories");
 const Blogs = require("../models/Blogs");
 const { default: slugify } = require("slugify");
 
+// /admin/categories
+
 // POST /
 exports.addCategory = async (req, res, next) => {
     try {
@@ -21,10 +23,9 @@ exports.addCategory = async (req, res, next) => {
             );
         }
 
-        //validate parent is valid or not
-        let parentCategory = null;
+        //validate parent is valid or not: parent must exists and not contains blogs
         if (parentId) {
-            parentCategory = await Categories.findById(parentId);
+            const parentCategory = await Categories.findById(parentId);
             if (!parentCategory)
                 throw httpError("Parent category not found", 404);
 
@@ -41,19 +42,46 @@ exports.addCategory = async (req, res, next) => {
         const category = new Categories({ name, description, parentId });
         await category.save();
 
-        //mark parent category as non-leaf
-        if (parentCategory) {
-            await Categories.findByIdAndUpdate(parentCategory._id, {
-                isLeaf: false,
-            });
-        }
-
         res.json(
             apiResponse({
                 message: "category added successfully",
                 data: { category },
             })
         );
+    } catch (error) {
+        next(error);
+    }
+};
+
+//DELETE /:categoryId
+exports.deleteEmptyCategory = async (req, res, next) => {
+    try {
+        const categoryId = req.params.categoryId;
+
+        const category = await Categories.findById(categoryId);
+        if (!category) throw httpError("Category not found", 404);
+
+        //check if category has children or not
+        const hasChildren = await Categories.exists({ parentId: categoryId });
+        if (hasChildren) {
+            throw httpError(
+                "Cannot delete category: it has child categories",
+                400
+            );
+        }
+
+        //check if category has blogs or not
+        const hasBlogs = await Blogs.exists({ categoryId: categoryId });
+        if (hasBlogs) {
+            throw httpError(
+                "Cannot delete category: it contains blog posts.",
+                400
+            );
+        }
+
+        await Categories.findByIdAndDelete(categoryId);
+
+        res.json(apiResponse({ message: "Category deleted successfully" }));
     } catch (error) {
         next(error);
     }
