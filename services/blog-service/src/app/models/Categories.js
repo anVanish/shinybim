@@ -11,13 +11,14 @@ const Categories = new mongoose.Schema(
     { timestamps: true }
 );
 
+//auto-update slug when update category name
 Categories.pre("save", function (next) {
     if (this.isModified("name")) {
         this.slug = slugify(this.name, { lower: true, strict: true });
     }
     next();
 });
-
+//auto-update slug when update category name
 Categories.pre("findOneAndUpdate", function (next) {
     const update = this.getUpdate();
 

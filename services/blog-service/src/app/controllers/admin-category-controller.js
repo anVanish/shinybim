@@ -6,7 +6,7 @@ const { default: slugify } = require("slugify");
 
 // /admin/categories
 
-// POST /
+//POST /
 exports.addCategory = async (req, res, next) => {
     const { name, description, parentId } = req.body;
 
@@ -43,6 +43,49 @@ exports.addCategory = async (req, res, next) => {
     res.json(
         apiResponse({
             message: "category added successfully",
+            data: { category },
+        })
+    );
+};
+
+//PUT /:categoryId
+exports.updateCategory = async (req, res, next) => {
+    const { categoryId } = req.params;
+    const { name, description, parentId } = req.body;
+
+    //validate required field
+    if (!name)
+        throw httpError("Missing required field: name and description", 400);
+
+    //validate parentId field
+    if (parentId) {
+        const parentCategory = await Categories.findById(parentId);
+        if (!parentCategory) throw httpError("Parent category not found", 404);
+
+        //parent category must have not contains any blogs
+        const hasBlogs = await Blogs.exists({ categoryId: parentId });
+        if (hasBlogs)
+            throw httpError(
+                "Cannot add subcategory to category already contains blogs",
+                400
+            );
+    }
+
+    const category = await Categories.findByIdAndUpdate(
+        categoryId,
+        {
+            name,
+            description,
+            parentId,
+        },
+        { new: true }
+    );
+
+    if (!category) throw httpError("Category not found", 404);
+
+    res.json(
+        apiResponse({
+            message: "category updated",
             data: { category },
         })
     );

@@ -10,6 +10,15 @@ exports.errorHandler = (err, req, res, next) => {
         err.message = "Invalid access token";
         statusCode = 403;
     }
+    if (err.code === 11000) {
+        const duplicatedField = Object.keys(err.keyPattern)[0];
+        const value = err.keyValue[duplicatedField];
+
+        return res.status(400).json({
+            success: false,
+            message: `${duplicatedField} "${value}" already exists`,
+        });
+    }
 
     console.error(err);
     res.status(statusCode).json(
