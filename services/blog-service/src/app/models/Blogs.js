@@ -18,7 +18,7 @@ const Blogs = new mongoose.Schema(
         allowComments: { type: Boolean, default: true },
         status: {
             type: String,
-            enum: ["draft, scheduled, published, deleted"],
+            enum: ["draft", "scheduled", "published", "deleted"],
             default: "draft",
         },
         scheduledAt: { type: Date },
